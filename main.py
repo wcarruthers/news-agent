@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, LLM
 from crewai_tools import TavilySearchTool #
 from supabase import create_client
+import resend
 
 def run_news_briefing():
     # 1. Load Keys
