@@ -4,6 +4,7 @@ from crewai import Agent, Task, Crew, LLM
 from crewai_tools import TavilySearchTool #
 from supabase import create_client
 import resend
+import time
 
 def run_news_briefing():
     # 1. Load Keys
@@ -51,6 +52,7 @@ def run_news_briefing():
     news_crew = Crew(
         agents=[scout, editor],
         tasks=[scout_task, edit_task],
+        step_callback=lambda x: time.sleep(2)
         verbose=True
     )
     
