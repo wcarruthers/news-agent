@@ -68,6 +68,25 @@ def run_news_briefing():
 
     return final_briefing
 
+import resend
+
+# Add this inside your run_news_briefing() function after the editor finishes
+def send_email_briefing(content):
+    resend.api_key = os.getenv("RESEND_API_KEY")
+    
+    params = {
+        "from": "Memphis News Agent <onboarding@resend.dev>",
+        "to": os.getenv("EMAIL_TO"), # Put your real email here
+        "subject": "Your Daily Memphis Tech Briefing",
+        "html": f"<div>{content}</div>",
+    }
+    
+    resend.Emails.send(params)
+    print("📧 Email sent successfully!")
+
+# Call it before the function returns
+
+
 if __name__ == "__main__":
     # The entry point of your script
     print("🚀 Starting Daily News Briefing...\n")
@@ -76,3 +95,7 @@ if __name__ == "__main__":
     
     print("\n--- FINAL BRIEFING ---")
     print(result)
+
+    send_email_briefing(result)
+
+    print("🔔 Email sent successfully!")
