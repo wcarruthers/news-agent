@@ -5,6 +5,8 @@ from crewai_tools import TavilySearchTool #
 from supabase import create_client
 import resend
 import time
+from google import genai
+from google.genai import types
 
 def run_news_briefing():
     # 1. Load Keys
@@ -13,10 +15,19 @@ def run_news_briefing():
     supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
 
     search_tool = TavilySearchTool()
+    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
+    print("--- Available Gemini Models ---")
+    for model in client.models.list():
+    # Only show models that can actually 'chat' or 'generate text'
+        if "generateContent" in model.supported_actions:
+            # We clean up the 'models/' prefix for a nicer list
+            clean_name = model.name.replace("models/", "")
+            print(f"ID: {clean_name:25} | Display: {model.display_name}")
     # Define your Gemini Pro Model
     gemini_pro = LLM(
-        model="gemini/gemini-flash-latest",
+        #model="gemini/gemini-flash-latest",
+        model = "gemini/gemini-2.5-flash-lite",
         api_key=os.getenv("GEMINI_API_KEY")
     )
 
@@ -52,7 +63,7 @@ def run_news_briefing():
     news_crew = Crew(
         agents=[scout, editor],
         tasks=[scout_task, edit_task],
-        step_callback=lambda x: time.sleep(2),
+        step_callback=lambda x: time.sleep(60)
         verbose=True
     )
     
